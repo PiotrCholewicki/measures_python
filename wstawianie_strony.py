@@ -52,17 +52,20 @@ def uzupelnij_strony(strona, offset):
 i = 0
 nr_klatki = 0
 nr_mieszkania = 0
-while input("Czy kontynuować? ") == "t":
+while True:
     if(nr_klatki == 0 or nr_mieszkania == 0):
         print("Podaj wartości dla pierwszej strony: ")
     else:
         print("\nOstatnio utworzono: "+nr_klatki+"/"+nr_mieszkania)
     nr_klatki = input("Podaj nr klatki ")
+    if(nr_klatki == "STOP" or nr_klatki == "stop" or nr_klatki == "nie" or nr_klatki == "NIE" or nr_klatki == "n" or nr_klatki == "N"):
+        break
     nr_mieszkania = input("Podaj nr mieszkania ")
     copy_rows(ws1, ws2, 1, ws1.max_row, ws1.max_row * i, nr_klatki, nr_mieszkania)
+    ob = int(input("Podaj ilosc obwodow "))
     gk = int(input("Podaj ilosc gniazdek w kuchni "))
     gl = int(input("Podaj ilosc gniazdek w łazience "))
-    ob = int(input("Podaj ilosc obwodow "))
+    
     strona = Strona(gk, gl, ob)
     uzupelnij_strony(strona, ws1.max_row*i)
     # Kopiowanie scalonych komórek - kolejne strony
