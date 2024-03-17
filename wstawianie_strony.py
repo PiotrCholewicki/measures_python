@@ -1,6 +1,6 @@
 import openpyxl as xl
 from copy import copy
-
+from openpyxl.worksheet.pagebreak import Break
 path1 = 'C:\\Users\\Piotr\\Desktop\\mieszkania\\szablon.xlsx'
 path2 = 'C:\\Users\\Piotr\\Desktop\\mieszkania\\test.xlsx'
 
@@ -38,6 +38,11 @@ def copy_rows(source_sheet, target_sheet, start_row, end_row, offset, nr_klatki,
     target_sheet.cell(row=2 + offset, column=8, value=nr_mieszkania)
     target_sheet.cell(row=7 + offset, column=10, value=nr_mieszkania)
 
+    ws = target_sheet
+    row_number = end_row+offset  # the row that you want to insert page break
+    page_break = Break(id=row_number)  # create Break obj
+    ws.row_breaks.append(page_break)  # insert page break
+
 #funkcja uzupelniajaca strony na podstawie danych wprowadzonych przez użytkownika
 def uzupelnij_strony(strona, offset):
     target_sheet = ws2
@@ -50,10 +55,10 @@ def uzupelnij_strony(strona, offset):
         target_sheet.cell(row=13 + offset + index, column=2, value='Gn nt hermet 2P+Z,16A,250V łazienka ')
         index+=1
     for i in range(ob_1): #1-fazowe
-        target_sheet.cell(row=50 + offset + index_ob, column=2, value='Obwod 1-fazowy ')
+        target_sheet.cell(row=49 + offset + index_ob, column=2, value='Obwod 1-fazowy ')
         index_ob += 1
     for i in range(ob_3): #3-fazowe
-        target_sheet.cell(row=50 + offset + index_ob, column=2, value='Obwod 3-fazowy ')
+        target_sheet.cell(row=49 + offset + index_ob, column=2, value='Obwod 3-fazowy ')
         index_ob += 1
 #funkcja która przyjmuje input typu "3+2", zamienia to na 3 obwody 1 fazowe, i 2 obwody 3-fazowe, 
 #zwraca tablice w ktorej tab[0] to 1-fazowe, tab[1] to 3 fazowe
