@@ -1,8 +1,8 @@
 import openpyxl as xl
 from copy import copy
 from openpyxl.worksheet.pagebreak import Break
-path1 = 'C:\\Users\\Piotr\\Desktop\\mieszkania\\szablon.xlsx'
-path2 = 'C:\\Users\\Piotr\\Desktop\\mieszkania\\test.xlsx'
+path1 = 'C:\\Users\\Piotr\\Desktop\\mieszkania\\szablon.xlsx' #ZMIEN LOKALIZACJE
+path2 = 'C:\\Users\\Piotr\\Desktop\\mieszkania\\test.xlsx' #ZMIEN LOKALIZACJE
 
 wb1 = xl.load_workbook(filename=path1)
 ws1 = wb1.worksheets[0]
@@ -42,22 +42,27 @@ def copy_rows(source_sheet, target_sheet, start_row, end_row, offset, nr_klatki,
     row_number = end_row+offset  # the row that you want to insert page break
     page_break = Break(id=row_number)  # create Break obj
     ws.row_breaks.append(page_break)  # insert page break
-
+    ws.col_breaks.append
 #funkcja uzupelniajaca strony na podstawie danych wprowadzonych przez użytkownika
 def uzupelnij_strony(strona, offset):
     target_sheet = ws2
     index = 0
     index_ob = 0
     for i in range(strona.gk):
+        target_sheet.cell(row=13 + offset + index, column=1, value=index+1)
         target_sheet.cell(row=13 + offset + index, column=2, value='Gn pt 2P+Z,16A,250V kuchnia ')
         index+=1
     for i in range(strona.gl):
+        target_sheet.cell(row=13 + offset + index, column=1, value=index+1)
         target_sheet.cell(row=13 + offset + index, column=2, value='Gn nt hermet 2P+Z,16A,250V łazienka ')
         index+=1
+
     for i in range(ob_1): #1-fazowe
+        target_sheet.cell(row=49 + offset + index_ob, column=1, value=index_ob+1)
         target_sheet.cell(row=49 + offset + index_ob, column=2, value='Obwod 1-fazowy ')
         index_ob += 1
     for i in range(ob_3): #3-fazowe
+        target_sheet.cell(row=49 + offset + index_ob, column=1, value=index_ob+1)
         target_sheet.cell(row=49 + offset + index_ob, column=2, value='Obwod 3-fazowy ')
         index_ob += 1
 #funkcja która przyjmuje input typu "3+2", zamienia to na 3 obwody 1 fazowe, i 2 obwody 3-fazowe, 
@@ -86,7 +91,7 @@ while True:
         print("Podaj wartości dla pierwszej strony: ")
     else:
         print("\nOstatnio utworzono: "+nr_klatki+"/"+nr_mieszkania)
-    nr_klatki = input("Podaj nr klatki ")
+    nr_klatki = input("Podaj nr klatki lub napisz stop ")
     if(nr_klatki == "STOP" or nr_klatki == "stop" or nr_klatki == "nie" or nr_klatki == "NIE" or nr_klatki == "n" or nr_klatki == "N"):
         break
     nr_mieszkania = input("Podaj nr mieszkania ")
