@@ -1,4 +1,5 @@
 import openpyxl as xl
+import random
 from copy import copy
 from openpyxl.worksheet.pagebreak import Break
 path1 = 'C:\\Users\\Piotr\\Desktop\\mieszkania\\szablon.xlsx' #ZMIEN LOKALIZACJE
@@ -48,22 +49,50 @@ def uzupelnij_strony(strona, offset):
     target_sheet = ws2
     index = 0
     index_ob = 0
+
     for i in range(strona.gk):
+        rand = random.random()*0.35+0.9
         target_sheet.cell(row=13 + offset + index, column=1, value=index+1)
         target_sheet.cell(row=13 + offset + index, column=2, value='Gn pt 2P+Z,16A,250V kuchnia ')
+        target_sheet.cell(row=13 + offset + index, column=3, value='B  16A  S   ')
+        target_sheet.cell(row=13 + offset + index, column=5, value=80)
+        target_sheet.cell(row=13 + offset + index, column=7, value=rand) 
+        target_sheet.cell(row=13 + offset + index, column=9, value=rand*80) 
+        target_sheet.cell(row=13 + offset + index, column=11, value='pozytywny') 
         index+=1
     for i in range(strona.gl):
+        rand = random.random()*0.35+0.9
         target_sheet.cell(row=13 + offset + index, column=1, value=index+1)
         target_sheet.cell(row=13 + offset + index, column=2, value='Gn nt hermet 2P+Z,16A,250V łazienka ')
+        target_sheet.cell(row=13 + offset + index, column=3, value='B  16A  S   ')
+        target_sheet.cell(row=13 + offset + index, column=5, value=80)
+        target_sheet.cell(row=13 + offset + index, column=7, value=rand) 
+        target_sheet.cell(row=13 + offset + index, column=9, value=rand*80) 
+        target_sheet.cell(row=13 + offset + index, column=11, value='pozytywny')
         index+=1
 
     for i in range(ob_1): #1-fazowe
+        #w 15% przypadkow uzupelnij pola obwodow o wartosci automatycznie
+        rand_sel = random.random()
         target_sheet.cell(row=49 + offset + index_ob, column=1, value=index_ob+1)
         target_sheet.cell(row=49 + offset + index_ob, column=2, value='Obwod 1-fazowy ')
+        if(rand_sel < 0.85):
+            target_sheet.cell(row=49 + offset + index_ob, column=6, value='> 1MΩ ')
+        else:
+            rand = random.randrange(850,1450)
+            target_sheet.cell(row=49 + offset + index_ob, column=6, value=rand)
         index_ob += 1
     for i in range(ob_3): #3-fazowe
+        rand_sel = random.random()
         target_sheet.cell(row=49 + offset + index_ob, column=1, value=index_ob+1)
         target_sheet.cell(row=49 + offset + index_ob, column=2, value='Obwod 3-fazowy ')
+        if(rand_sel < 0.85):
+            for i in range(3, 13):
+                target_sheet.cell(row=49 + offset + index_ob, column=i, value='> 1MΩ ')
+        else:
+            for i in range(3, 13):
+                rand = random.randrange(850,1450)
+                target_sheet.cell(row=49 + offset + index_ob, column=i, value=rand)
         index_ob += 1
 #funkcja która przyjmuje input typu "3+2", zamienia to na 3 obwody 1 fazowe, i 2 obwody 3-fazowe, 
 #zwraca tablice w ktorej tab[0] to 1-fazowe, tab[1] to 3 fazowe
@@ -112,4 +141,4 @@ while True:
         ws2.merge_cells(start_row=min_row + ws1.max_row * i, start_column=min_col, end_row=max_row + ws1.max_row * i, end_column=max_col)
     i += 1
 
-wb2.save(path2)
+    wb2.save(path2)
