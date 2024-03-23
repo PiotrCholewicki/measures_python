@@ -156,9 +156,18 @@ def uzupelnij_strony(strona, offset):
     tab_combined = tab_bk + tab_bz
     tab_combined.sort()
     combined_string = ','.join([str(value) for value in tab_combined])
+    string_bz = ""
+    string_bk = ""
+    if(strona.bkz + strona.blz > 0):
+        string_bz = "BRAK OCHRONY PORAZENIOWEJ DLA PKT. "+','.join([str(value) for value in tab_bz])
+    if(strona.bkk + strona.blk > 0):
+        string_bk = " BRAK KOŁKÓW OCHRONNYCH DLA PKT. "+','.join([str(value) for value in tab_bk])
+    napis_dol = string_bz+string_bk 
     if(strona.bkz + strona.bkk + strona.blz + strona.blk > 0): #suma wieksza od zera, blad wystapil
-        target_sheet.cell(row=43 + offset, column=8, value='zachowana Z WYJ. '+combined_string).font = bold_font
+        target_sheet.cell(row=43 + offset, column=8, value='zachowana Z WYJ. PKT. '+combined_string).font = bold_font
+        target_sheet.cell(row=71 + offset, column=2, value=napis_dol).font = bold_font
 
+    
 #funkcja która przyjmuje input typu "3+2", zamienia to na 3 obwody 1 fazowe, i 2 obwody 3-fazowe, 
 #zwraca tablice w ktorej tab[0] to 1-fazowe, tab[1] to 3 fazowe
 
