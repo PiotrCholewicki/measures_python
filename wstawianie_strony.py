@@ -2,6 +2,7 @@ import openpyxl as xl
 import random
 from copy import copy
 from openpyxl.worksheet.pagebreak import Break
+from openpyxl.styles import Font
 path1 = 'C:\\Users\\Piotr\\Desktop\\mieszkania\\szablon.xlsx' #ZMIEN LOKALIZACJE
 path2 = 'C:\\Users\\Piotr\\Desktop\\mieszkania\\test.xlsx' #ZMIEN LOKALIZACJE
 
@@ -111,8 +112,53 @@ def uzupelnij_strony(strona, offset):
                 target_sheet.cell(row=49 + offset + index_ob, column=i, value=rand)
         index_ob += 1
 
+
+    #dodawanie roznicowki 
     if(strona.roz):
         target_sheet.cell(row=38 + offset, column=2, value='Wyłącznik  różnicowo-prądowy :  pomiar  prądu  wyłączenia :  wynik  prawidłowy ,  wartość  prądu  zawarta  między  15  m A     oraz   30  m A.  Działanie  na  przycisk  TEST-reakcja  prawidłowa-nastąpiło  wyłączenie.   Wyłacznik  nadaje  się  do  eksploatacji.')
+
+    #błędy wprowadzone przez uzytkownika:
+    index_bk = 0
+    index_bl = gk
+    bold_font = Font(name = "Arial", bold=True)
+    tab_bz = []
+    tab_bk = []
+    #bledy zerowania w kuchni
+    for i in range(strona.bkz):
+        target_sheet.cell(row=13 + offset + index_bk, column=7, value='NIE').font = bold_font
+        target_sheet.cell(row=13 + offset + index_bk, column=9, value='NIE').font = bold_font
+        target_sheet.cell(row=13 + offset + index_bk, column=11, value='NEGATYWNY').font = bold_font
+        index_bk += 1
+        tab_bz.append(index_bk)
+    #bledy kolkow w kuchni
+    for i in range(strona.bkk):
+        target_sheet.cell(row=13 + offset + index_bk, column=7, value='NIE').font = bold_font
+        target_sheet.cell(row=13 + offset + index_bk, column=9, value='NIE').font = bold_font
+        target_sheet.cell(row=13 + offset + index_bk, column=11, value='NEGATYWNY').font = bold_font
+        index_bk += 1
+        tab_bk.append(index_bk)
+    #bledy zerowania w lazience
+    for i in range(strona.blz):
+        target_sheet.cell(row=13 + offset + index_bl, column=7, value='NIE').font = bold_font
+        target_sheet.cell(row=13 + offset + index_bl, column=9, value='NIE').font = bold_font
+        target_sheet.cell(row=13 + offset + index_bl, column=11, value='NEGATYWNY').font = bold_font
+        index_bl += 1
+        tab_bz.append(index_bl)
+    #bledy kolkow w lazience
+    for i in range(strona.blk):
+        target_sheet.cell(row=13 + offset + index_bl, column=7, value='NIE').font = bold_font
+        target_sheet.cell(row=13 + offset + index_bl, column=9, value='NIE').font = bold_font
+        target_sheet.cell(row=13 + offset + index_bl, column=11, value='NEGATYWNY').font = bold_font
+        index_bl += 1
+        tab_bk.append(index_bl)
+    #wypisywanie jako zachowana, Z WYJ. PKT.
+    bold_font = Font(name = "Arial", bold=True, italic=True)
+    tab_combined = tab_bk + tab_bz
+    tab_combined.sort()
+    combined_string = ','.join([str(value) for value in tab_combined])
+    if(strona.bkz + strona.bkk + strona.blz + strona.blk > 0): #suma wieksza od zera, blad wystapil
+        target_sheet.cell(row=43 + offset, column=8, value='zachowana Z WYJ. '+combined_string).font = bold_font
+
 #funkcja która przyjmuje input typu "3+2", zamienia to na 3 obwody 1 fazowe, i 2 obwody 3-fazowe, 
 #zwraca tablice w ktorej tab[0] to 1-fazowe, tab[1] to 3 fazowe
 
