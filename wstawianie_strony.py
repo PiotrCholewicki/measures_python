@@ -15,11 +15,17 @@ ws2.column_dimensions['B'].width = 41
 
 
 class Strona:
-    def __init__(self, gk, gl, ob_1, ob_3): #ob - obwody, gk - gniazdka w kuchni, gl - gniazdka w lazience,
+    def __init__(self, gk, gl, ob_1, ob_3, bkz, bkk, blz, blk, roz, wts): #ob - obwody, gk - gniazdka w kuchni, gl - gniazdka w lazience,
         self.gk = gk
         self.gl = gl
         self.ob_1 = ob_1
         self.ob_3 = ob_3
+        self.bkz = bkz
+        self.bkk = bkk
+        self.blz = blz
+        self.blk = blk
+        self.roz = roz
+        self.wts = wts
 
 # Funkcja do kopiowania wierszy wraz z formatowaniem i dodawaniem podziału strony
 def copy_rows(source_sheet, target_sheet, start_row, end_row, offset, nr_klatki, nr_mieszkania):
@@ -54,21 +60,31 @@ def uzupelnij_strony(strona, offset):
         rand = random.random()*0.35+0.9
         target_sheet.cell(row=13 + offset + index, column=1, value=index+1)
         target_sheet.cell(row=13 + offset + index, column=2, value='Gn pt 2P+Z,16A,250V kuchnia ')
-        target_sheet.cell(row=13 + offset + index, column=3, value='B  16A  S   ')
-        target_sheet.cell(row=13 + offset + index, column=5, value=80)
+        if not(strona.wts):
+            target_sheet.cell(row=13 + offset + index, column=3, value='B  16A  S   ')
+            target_sheet.cell(row=13 + offset + index, column=5, value=80)
+            target_sheet.cell(row=13 + offset + index, column=9, value=rand*80)
+        else:
+            target_sheet.cell(row=13 + offset + index, column=3, value='WTs  16A  ')
+            target_sheet.cell(row=13 + offset + index, column=5, value=40)
+            target_sheet.cell(row=13 + offset + index, column=9, value=rand*40)
         target_sheet.cell(row=13 + offset + index, column=7, value=rand) 
-        target_sheet.cell(row=13 + offset + index, column=9, value=rand*80) 
         target_sheet.cell(row=13 + offset + index, column=11, value='pozytywny') 
         index+=1
     for i in range(strona.gl):
         rand = random.random()*0.35+0.9
         target_sheet.cell(row=13 + offset + index, column=1, value=index+1)
         target_sheet.cell(row=13 + offset + index, column=2, value='Gn nt hermet 2P+Z,16A,250V łazienka ')
-        target_sheet.cell(row=13 + offset + index, column=3, value='B  16A  S   ')
-        target_sheet.cell(row=13 + offset + index, column=5, value=80)
+        if not(strona.wts):
+            target_sheet.cell(row=13 + offset + index, column=3, value='B  16A  S   ')
+            target_sheet.cell(row=13 + offset + index, column=5, value=80)
+            target_sheet.cell(row=13 + offset + index, column=9, value=rand*80)
+        else:
+            target_sheet.cell(row=13 + offset + index, column=3, value='WTs  16A  ')
+            target_sheet.cell(row=13 + offset + index, column=5, value=40)
+            target_sheet.cell(row=13 + offset + index, column=9, value=rand*40)
         target_sheet.cell(row=13 + offset + index, column=7, value=rand) 
-        target_sheet.cell(row=13 + offset + index, column=9, value=rand*80) 
-        target_sheet.cell(row=13 + offset + index, column=11, value='pozytywny')
+        target_sheet.cell(row=13 + offset + index, column=11, value='pozytywny') 
         index+=1
 
     for i in range(ob_1): #1-fazowe
@@ -94,6 +110,9 @@ def uzupelnij_strony(strona, offset):
                 rand = random.randrange(850,1450)
                 target_sheet.cell(row=49 + offset + index_ob, column=i, value=rand)
         index_ob += 1
+
+    if(strona.roz):
+        target_sheet.cell(row=38 + offset, column=2, value='Wyłącznik  różnicowo-prądowy :  pomiar  prądu  wyłączenia :  wynik  prawidłowy ,  wartość  prądu  zawarta  między  15  m A     oraz   30  m A.  Działanie  na  przycisk  TEST-reakcja  prawidłowa-nastąpiło  wyłączenie.   Wyłacznik  nadaje  się  do  eksploatacji.')
 #funkcja która przyjmuje input typu "3+2", zamienia to na 3 obwody 1 fazowe, i 2 obwody 3-fazowe, 
 #zwraca tablice w ktorej tab[0] to 1-fazowe, tab[1] to 3 fazowe
 
@@ -132,8 +151,47 @@ while True:
     ob_3 = tab[1]
     gk = int(input("Podaj ilosc gniazdek w kuchni "))
     gl = int(input("Podaj ilosc gniazdek w łazience "))
-    
-    strona = Strona(gk, gl, ob_1, ob_3)
+    check = input("Błędy/Różnicówka/WTS? ")
+    check = check.upper()
+    if(check == "T" or check == "TAK"):
+        b_k_z = int(input("Kuchnia zerowanie: "))
+        b_k_k = int(input("Kuchnia kołki: "))
+        b_l_z = int(input("Łazienka zerowanie: "))
+        b_l_k = int(input("Łazienka kołki: "))
+        roznicowka = input("Różnicówka?(t/n): ")
+        roznicowka = roznicowka.upper()
+        if(roznicowka == "T" or roznicowka == "TAK"):
+            roznicowka = True
+        else:
+            roznicowka = False
+        wts = input("WTS?(t/n): ")
+        wts = wts.upper()
+        if(wts == "T" or wts == "TAK"):
+            wts = True
+        else:
+            wts = False
+        strona = Strona(gk, gl, ob_1, ob_3, b_k_z, b_k_k, b_l_z, b_l_k, roznicowka, wts)
+    elif(check == "NIE" or check == "N" or check == ""):
+        strona = Strona(gk, gl, ob_1, ob_3, 0, 0, 0, 0, False, False)
+    else: #dla napisow check = "brw" albo "br", gdzie r to roznicowka, w to wts. Jesli 'w' wystepuje w lancuchu to znaczy ze dodac wts, jesli 'r' to roznicowke 
+        roznicowka = False
+        wts = False
+        b_k_z = 0
+        b_k_k = 0
+        b_l_z = 0
+        b_l_k = 0
+        for i2 in check:
+            if(i2 == "B"):
+                b_k_z = int(input("Kuchnia zerowanie: "))
+                b_k_k = int(input("Kuchnia kołki: "))
+                b_l_z = int(input("Łazienka zerowanie: "))
+                b_l_k = int(input("Łazienka kołki: "))
+            elif(i2 == "R"):
+                roznicowka = True
+            elif(i2 == "W"):
+                wts = True
+        strona = Strona(gk, gl, ob_1, ob_3, b_k_z, b_k_k, b_l_z, b_l_k, roznicowka, wts)
+
     uzupelnij_strony(strona, ws1.max_row*i)
     # Kopiowanie scalonych komórek - kolejne strony
     for merged_cell_range in ws1.merged_cells.ranges:
