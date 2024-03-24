@@ -190,6 +190,8 @@ i = 0
 nr_klatki = 0
 nr_mieszkania = 0
 while True:
+    stary_nr_klatki = nr_klatki
+    stary_nr_mieszkania = nr_mieszkania
     if(nr_klatki == 0 or nr_mieszkania == 0):
         print("Podaj wartości dla pierwszej strony: ")
     else:
@@ -206,6 +208,20 @@ while True:
     ob_3 = tab[1]
     gk = int(input("Podaj ilosc gniazdek w kuchni "))
     gl = int(input("Podaj ilosc gniazdek w łazience "))
+    brak_bledow = True
+    # Prosta walidacja sumy gk i gl
+    if gk + gl > 23:
+        print("ZA DUŻO GNIAZDEK, EDYTUJ RĘCZNIE \n")
+        nr_mieszkania = stary_nr_mieszkania
+        nr_klatki = stary_nr_klatki
+        brak_bledow = False
+        continue
+    if ob_1 + ob_3 > 16:
+        print("ZA DUŻO OBWODÓW, EDYTUJ RĘCZNIE \n")
+        nr_mieszkania = stary_nr_mieszkania
+        nr_klatki = stary_nr_klatki
+        brak_bledow = False
+        continue
     check = input("Błędy/Różnicówka/WTS? ")
     check = check.upper()
     if(check == "T" or check == "TAK"):
@@ -213,6 +229,15 @@ while True:
         b_k_k = int(input("Kuchnia kołki: "))
         b_l_z = int(input("Łazienka zerowanie: "))
         b_l_k = int(input("Łazienka kołki: "))
+
+        # Walidacja liczby błędów w stosunku do liczby gniazdek
+        if b_k_z + b_k_k > gk or b_l_z + b_l_k > gl:
+            print("Ilość błędów > ilość gniazdek. Spróbuj ponownie.\n")
+            nr_mieszkania = stary_nr_mieszkania
+            nr_klatki = stary_nr_klatki
+            brak_bledow = False
+            continue
+
         roznicowka = input("Różnicówka?(t/n): ")
         roznicowka = roznicowka.upper()
         if(roznicowka == "T" or roznicowka == "TAK"):
@@ -241,17 +266,32 @@ while True:
                 b_k_k = int(input("Kuchnia kołki: "))
                 b_l_z = int(input("Łazienka zerowanie: "))
                 b_l_k = int(input("Łazienka kołki: "))
+                if b_k_z + b_k_k > gk or b_l_z + b_l_k > gl:
+                    print("Ilość błędów > ilość gniazdek. Spróbuj ponownie.\n")
+                    nr_mieszkania = stary_nr_mieszkania
+                    nr_klatki = stary_nr_klatki
+                    brak_bledow = False
+                    continue
             elif(i2 == "R"):
                 roznicowka = True
             elif(i2 == "W"):
                 wts = True
+        
         strona = Strona(gk, gl, ob_1, ob_3, b_k_z, b_k_k, b_l_z, b_l_k, roznicowka, wts)
-
-    uzupelnij_strony(strona, ws1.max_row*i)
+    if(brak_bledow):
+        uzupelnij_strony(strona, ws1.max_row*i)
     # Kopiowanie scalonych komórek - kolejne strony
-    for merged_cell_range in ws1.merged_cells.ranges:
-        min_row, min_col, max_row, max_col = merged_cell_range.min_row, merged_cell_range.min_col, merged_cell_range.max_row, merged_cell_range.max_col
-        ws2.merge_cells(start_row=min_row + ws1.max_row * i, start_column=min_col, end_row=max_row + ws1.max_row * i, end_column=max_col)
-    i += 1
+        for merged_cell_range in ws1.merged_cells.ranges:
+            min_row, min_col, max_row, max_col = merged_cell_range.min_row, merged_cell_range.min_col, merged_cell_range.max_row, merged_cell_range.max_col
+            ws2.merge_cells(start_row=min_row + ws1.max_row * i, start_column=min_col, end_row=max_row + ws1.max_row * i, end_column=max_col)
+        i += 1
+        
+        wb2.save(path2)
+    else:
+        continue
+    
 
-    wb2.save(path2)
+        
+    
+
+
