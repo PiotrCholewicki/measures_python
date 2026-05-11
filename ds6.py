@@ -1,0 +1,169 @@
+import openpyxl as xl
+import random
+from copy import copy
+from openpyxl.worksheet.pagebreak import Break
+from openpyxl.styles import Font
+import os
+
+path1 = 'C:\\Users\\Piotr\\Desktop\\mieszkania\\skrypt_pp\\szablon.xlsx' #ZMIEN LOKALIZACJE
+path2 = 'C:\\Users\\Piotr\\Desktop\\mieszkania\\skrypt_pp\\akademiki.xlsx' #ZMIEN LOKALIZACJE
+
+sheet_name = "DS6"  # ZMIEN NA WŁAŚCIWĄ NAZWĘ ARKUSZA
+
+wb1 = xl.load_workbook(filename=path1)
+ws1 = wb1.worksheets[0]
+
+
+page_index = 0
+HEADER_INDEX = 12
+FOOTER_INDEX = 58
+inner_index = HEADER_INDEX + 1 
+global_index = inner_index
+room_index = 1
+
+
+def copy_rows(source_sheet, target_sheet, offset):
+
+    for row in source_sheet.iter_rows(min_row=1, max_row=source_sheet.max_row):
+        for cell in row:
+            target_cell = target_sheet.cell(row=cell.row + offset, column=cell.column, value=cell.value)
+            target_cell.font = copy(cell.font)
+            target_cell.border = copy(cell.border)
+            target_cell.fill = copy(cell.fill)
+            target_cell.number_format = copy(cell.number_format)
+            target_cell.protection = copy(cell.protection)
+            target_cell.alignment = copy(cell.alignment)
+            
+
+    ws = target_sheet
+    row_number = source_sheet.max_row + offset  # the row that you want to insert page break
+    page_break = Break(id=row_number)  # create Break obj
+    ws.row_breaks.append(page_break)  # insert page break
+    ws.col_breaks.append
+
+def mainloop():
+    global global_index, inner_index, page_index, ws2, room_index
+    while True:
+        room_index = 1
+        sockets_index = 1
+        floor_name = input("Podaj nazwę PIĘTRA/STOP: ").upper()
+        if(floor_name == "SAVE" or floor_name == "STOP"):
+            wb2.save(path2)
+            print("Zapisano plik")
+            global_index = page_index * 60 + inner_index
+            with open('C:\\Users\\Piotr\\Desktop\\mieszkania\\skrypt_pp\\last_index.txt', 'w') as file:
+                file.write(str(global_index))
+            break
+        else:
+            if(inner_index >= 56):
+                inner_index = HEADER_INDEX + 1
+                page_index += 1
+                global_index = page_index * 60 + inner_index
+                copy_rows(ws1, ws2, page_index * 60)
+            #add floor name in the beggining
+            ws2.cell(row = global_index, column = 1, value = f"PIĘTRO {floor_name}").font = Font(bold=True, size=16)
+            ws2.cell(row = global_index, column = 1).alignment = xl.styles.Alignment(horizontal='center')
+            ws2.merge_cells(start_row=global_index, start_column=1, end_row=global_index, end_column=9)
+            inner_index += 1
+            global_index = page_index * 60 + inner_index
+            ws2.cell(row = global_index, column = 1, value = f"KORYTARZ PIĘTRO {floor_name}").font = Font(bold=True, size=16)
+            ws2.cell(row = global_index, column = 1).alignment = xl.styles.Alignment(horizontal='center')
+            ws2.merge_cells(start_row=global_index, start_column=1, end_row=global_index, end_column=9)
+            inner_index += 1
+
+            for corridor_sockets in range(1, 7):
+                global_index = page_index * 60 + inner_index
+                ws2.cell(row=global_index, column=1, value=sockets_index)
+                ws2.cell(row=global_index, column=2, value="Gniazdko 1-fazowe")
+                ws2.cell(row=global_index, column=3, value="SBinst")
+                ws2.cell(row=global_index, column=4, value="B16")
+                ws2.cell(row=global_index, column=5, value=230.00)
+                ws2.cell(row=global_index, column=6, value="=RAND()*0.35+0.9")
+                ws2.cell(row=global_index, column=7, value=80)
+                ws2.cell(row=global_index, column=8, value=f"=F{global_index}*G{global_index}")  
+                ws2.cell(row=global_index, column=9, value="TAK")
+                inner_index += 1
+                sockets_index += 1
+
+            for h in range(1, 25):
+
+                # Check if the template isn't fullfilled
+                if(inner_index >= 56):
+                    inner_index = HEADER_INDEX + 1
+                    page_index += 1
+                    global_index = page_index * 60 + inner_index
+                    copy_rows(ws1, ws2, page_index * 60)
+
+                #first add the floor name
+                global_index = page_index * 60 + inner_index
+                if(int(room_index) < 10):
+                    room_index_str = f"0{room_index}"
+                else:
+                    room_index_str = str(room_index)
+                room_name = "POKÓJ " + str(floor_name) + room_index_str
+    
+                ws2.cell(row = global_index, column = 1, value = room_name).font = Font(bold=True, size=16)
+                ws2.cell(row = global_index, column = 1).alignment = xl.styles.Alignment(horizontal='center')
+                ws2.merge_cells(start_row=global_index, start_column=1, end_row=global_index, end_column=9)
+                inner_index += 1
+
+                
+                sockets = 7
+                sockets_index = 1
+
+                for i in range(sockets):
+                    #check if the template isn't fullfilled
+                    if(inner_index >= 57):
+                        inner_index = HEADER_INDEX + 1
+                        page_index += 1
+                        copy_rows(ws1, ws2, page_index * 60)
+                        
+                    #calculate the global index1
+                    global_index = page_index * 60 + inner_index
+                    
+                    ws2.cell(row=global_index, column=1, value=sockets_index)
+                    ws2.cell(row=global_index, column=2, value="Gniazdko 1-fazowe")
+                    ws2.cell(row=global_index, column=3, value="SBinst")
+                    ws2.cell(row=global_index, column=4, value="B16")
+                    ws2.cell(row=global_index, column=5, value=230.00)
+                    ws2.cell(row=global_index, column=6, value="=RAND()*0.35+0.9")
+                    ws2.cell(row=global_index, column=7, value=80)
+                    ws2.cell(row=global_index, column=8, value=f"=F{global_index}*G{global_index}")  
+                    ws2.cell(row=global_index, column=9, value="TAK")
+                    sockets_index += 1
+                    inner_index += 1
+                room_index += 1
+            inner_index = 57
+                
+                
+                
+        wb2.save(path2)
+        global_index = page_index * 60 + inner_index
+        sockets_index = 1
+        with open('C:\\Users\\Piotr\\Desktop\\mieszkania\\skrypt_pp\\last_index.txt', 'w') as file:
+            file.write(str(global_index))
+        with open('C:\\Users\\Piotr\\Desktop\\mieszkania\\skrypt_pp\\last_room.txt', 'w') as file:
+            file.write(room_name)
+            
+            
+
+
+
+wb2 = xl.load_workbook(filename=path2)
+ws2 = wb2.create_sheet(sheet_name)
+#initial copy of a template, if it's the first run
+ws2.column_dimensions['A'].width = 8.43
+ws2.column_dimensions['B'].width = 40.43
+ws2.column_dimensions['C'].width = 20.43
+ws2.column_dimensions['D'].width = 9.57
+ws2.column_dimensions['E'].width = 23.29
+ws2.column_dimensions['F'].width = 16.14
+ws2.column_dimensions['G'].width = 16.86
+ws2.column_dimensions['H'].width = 8.8
+ws2.column_dimensions['I'].width = 13.14
+copy_rows(ws1, ws2, 0)
+mainloop()
+
+
+
+

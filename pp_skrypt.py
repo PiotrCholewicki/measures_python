@@ -84,6 +84,7 @@ def mainloop():
                     inner_index = 57
                 add_header("PIĘTRO " + room_name[2:])
                 print("Dodano piętro: ", room_name[2:])
+                continue
                 
             ws2.cell(row = global_index, column = 1).alignment = xl.styles.Alignment(horizontal='center')
             ws2.merge_cells(start_row=global_index, start_column=1, end_row=global_index, end_column=9)
